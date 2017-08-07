@@ -1,8 +1,10 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http.Formatting;
 using System.Threading;
 using System.Threading.Tasks;
+using ClientDependency.Core;
 using Endzone.uSplit.Commands;
 using Endzone.uSplit.GoogleApi;
 using Endzone.uSplit.Models;
@@ -81,7 +83,7 @@ namespace Endzone.uSplit.Backoffice
         {
             var nodes = new TreeNodeCollection();
             
-            string parentId = UmbracoConstants.System.Root.ToString();
+            string parentId = config.GoogleProfileId;
             
             if (!await uSplitAuthorizationCodeFlow.GetInstance(config).IsConnected(CancellationToken.None))
             {
@@ -157,8 +159,9 @@ namespace Endzone.uSplit.Backoffice
                     icon = Constants.Icons.Block + " color-red";
                     break;
             }
-            var url = $"content/{Constants.Trees.AbTesting}/{parentId}/experiment/{experiment.GoogleExperiment.Id}";
-            return CreateTreeNode(experiment.GoogleExperiment.Id, parentId, queryStrings, name, icon, url);
+            var url = $"content/{Constants.Trees.AbTesting}/experiment/{experiment.GoogleExperiment.Id}?{parentId}";
+            var node = CreateTreeNode(experiment.GoogleExperiment.Id, parentId, queryStrings, name, icon, url); // FIXME
+            return node;
         }
 
 
