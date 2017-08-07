@@ -2,6 +2,7 @@ using System;
 using System.Threading.Tasks;
 using System.Timers;
 using Endzone.uSplit.Commands;
+using Endzone.uSplit.Models;
 using Umbraco.Core;
 using Umbraco.Core.Logging;
 
@@ -39,18 +40,22 @@ namespace Endzone.uSplit.Pipeline
 
         public async Task UpdateExperimentsCacheAsync()
         {
-            logger.Info(typeof(ExperimentsUpdater), "Updating experiments data from Google Analytics.");
-            try
+            foreach (var config in AccountConfig.GetAll())
             {
-                //TODO: check if we are configured, otherwise this will generate errors every now and then
-                var cache = ApplicationContext.Current.ApplicationCache.RuntimeCache;
-                var experiments = await new GetExperiments().ExecuteAsync();
-                cache.InsertCacheItem(Constants.Cache.RawExperimentData, () => experiments, Constants.Cache.ExperimentsRefreshInterval);
-                cache.ClearCacheItem(Constants.Cache.ParsedExperiments);
-            }
-            catch (Exception ex)
-            {
-                logger.Error(typeof(ExperimentsUpdater), "Failed to download A/B testing data.", ex);
+                logger.Info(typeof(ExperimentsUpdater), $"Updating experiments data from Google Analytics for profile ${config.GoogleProfileId}.");
+                try
+                {
+                    //TODO: check if we are configured, otherwise this will generate errors every now and then
+                    var cache = ApplicationContext.Current.ApplicationCache.RuntimeCache;
+                    var experiments = await new GetExperiments(config).ExecuteAsync();
+                    cache.InsertCacheItem(Constants.Cache.RawExperimentData, () => experiments,
+                        Constants.Cache.ExperimentsRefreshInterval);
+                    cache.ClearCacheItem(Constants.Cache.ParsedExperiments);
+                }
+                catch (Exception ex)
+                {
+                    logger.Error(typeof(ExperimentsUpdater), $"Failed to download A/B testing data for profile ${config.GoogleProfileId}.", ex);
+                }
             }
         }
     }

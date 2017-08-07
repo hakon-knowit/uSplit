@@ -1,3 +1,4 @@
+using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web.Http;
@@ -15,9 +16,9 @@ namespace Endzone.uSplit.API
     public class ManageController : BackofficeController
     {
         [HttpGet]
-        public async Task<HttpResponseMessage> GetExperimentAsync(string id)
+        public async Task<HttpResponseMessage> GetExperimentAsync(string id, string profileId)
         {
-            var experiment = await ExecuteAsync(new GetGoogleExperiment()
+            var experiment = await ExecuteAsync(new GetGoogleExperiment(AccountConfig.GetByProfileId(profileId))
             {
                 GoogleExperimentId = id
             });
@@ -29,18 +30,18 @@ namespace Endzone.uSplit.API
         }
 
         [HttpGet]
-        public async Task<GoogleExperiment> CreateExperimentAsync(int id)
+        public async Task<GoogleExperiment> CreateExperimentAsync(int id, string profileId)
         {
-            return await ExecuteAsync(new CreateExperiment()
+            return await ExecuteAsync(new CreateExperiment(AccountConfig.GetByProfileId(profileId))
             {
                 NodeUnderTestId = id
             });
         }
 
         [HttpPost]
-        public async Task<HttpResponseMessage> AddVariationAsync([FromBody]AddVariationRequest request)
+        public async Task<HttpResponseMessage> AddVariationAsync(string profileId, [FromBody]AddVariationRequest request)
         {
-            var variationDetails = await ExecuteAsync(new AddVariation()
+            var variationDetails = await ExecuteAsync(new AddVariation(AccountConfig.GetByProfileId(profileId))
             {
                 GoogleExperimentId = request.ExperimentId,
                 NodeId = request.NodeId
@@ -49,19 +50,19 @@ namespace Endzone.uSplit.API
         }
 
         [HttpDelete]
-        public async Task DeleteExperimentAsync(string id)
+        public async Task DeleteExperimentAsync(string id, string profileId)
         {
             //TODO: add an option to delete variations (e.g. Umbraco content linked to it)
-            await ExecuteAsync(new DeleteExperiment()
+            await ExecuteAsync(new DeleteExperiment(AccountConfig.GetByProfileId(profileId))
             {
                 GoogleExperimentId = id
             });
         }
 
         [HttpPost]
-        public async Task DeleteVariationAsync([FromBody]DeleteVariationRequest request)
+        public async Task DeleteVariationAsync(string profileId, [FromBody]DeleteVariationRequest request)
         {
-            await ExecuteAsync(new DeleteVariation()
+            await ExecuteAsync(new DeleteVariation(AccountConfig.GetByProfileId(profileId))
             {
                 GoogleExperimentId = request.ExperimentId,
                 VariationName = request.VariationName
@@ -69,9 +70,9 @@ namespace Endzone.uSplit.API
         }
 
         [HttpPost]
-        public async Task<HttpResponseMessage> StartExperimentAsync(string id)
+        public async Task<HttpResponseMessage> StartExperimentAsync(string id, string profileId)
         {
-            var experiment = await ExecuteAsync(new StartExperiment()
+            var experiment = await ExecuteAsync(new StartExperiment(AccountConfig.GetByProfileId(profileId))
             {
                 GoogleExperimentId = id
             });
@@ -83,12 +84,9 @@ namespace Endzone.uSplit.API
         }
 
         [HttpPost]
-        public async Task<HttpResponseMessage> StopExperimentAsync(string id)
+        public async Task<HttpResponseMessage> StopExperimentAsync(string id, string profileId)
         {
-            var experiment = await ExecuteAsync(new StopExperiment()
-            {
-                GoogleExperimentId = id
-            });
+            var experiment = await ExecuteAsync(new StopExperiment(AccountConfig.GetByProfileId(profileId), id));
             var details = await ExecuteAsync(new GetExperimentDetails()
             {
                 Experiment = experiment

@@ -25,13 +25,14 @@ namespace Endzone.uSplit
 
         public static class AppSettings
         {
-            public const string GoogleClientId      = "uSplit:googleClientId";
-            public const string GoogleClientSecret  = "uSplit:googleClientSecret";
-            public const string GoogleAccountId     = "uSplit:accountId";
-            public const string GoogleWebPropertyId = "uSplit:webPropertyId";
-            public const string GoogleProfileId     = "uSplit:profileId";
+            public const string Prefix              = "uSplit";
+            public const string GoogleClientId      = "googleClientId";
+            public const string GoogleClientSecret  = "googleClientSecret";
+            public const string GoogleAccountId     = "accountId";
+            public const string GoogleWebPropertyId = "webPropertyId";
+            public const string GoogleProfileId     = "profileId";
         }
-
+        
         public static class Google
         {
             public static readonly string BaseUrl = $"{UmbracoPath}/backoffice/{ApplicationAlias}/{{controller}}/{{action}}";
