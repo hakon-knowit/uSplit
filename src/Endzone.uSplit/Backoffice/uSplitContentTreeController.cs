@@ -103,9 +103,9 @@ namespace Endzone.uSplit.Backoffice
             var name = config.Name;
             if (name.IsNullOrWhiteSpace()) name = config.GoogleProfileId;
 
-            const string icon = Constants.Icons.Block + " color-red";
+            const string icon = Constants.Icons.Account + " color-black";
 
-            var url = $"content/{Constants.Trees.AbTesting}/{config.GoogleProfileId}/";
+            var url = $"content/{Constants.Trees.AbTesting}/dashboard/{config.GoogleProfileId}/";
             var node = CreateTreeNode(config.GoogleProfileId, $"{UmbracoConstants.System.Root}", queryStrings, name, icon, url);
             node.HasChildren = true;
             return node;

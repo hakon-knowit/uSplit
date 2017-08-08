@@ -1,8 +1,12 @@
 ﻿angular.module("umbraco").controller("uSplit.abTesting.configurationController",
-    function ($scope, $q, uSplitConfigurationResource) {
+    function ($scope, $q, $routeParams, navigationService, uSplitConfigurationResource) {
 
         $scope.loaded = false;
         $scope.accounts = [];
+        
+        var path = [-1];
+        if ($routeParams.id) path.push($routeParams.id);
+        navigationService.syncTree({ tree: "abtesting", path: path, forceReload: false, activate: true });
 
         $scope.tabs = [
             { id: "configuration", label: "Configuration" },

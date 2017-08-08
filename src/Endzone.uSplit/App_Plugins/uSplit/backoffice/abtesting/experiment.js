@@ -15,8 +15,6 @@
         //refactor this to a parent controller?
         $scope.apiReady = false;
 
-        console.log($routeParams);
-
         var urlParts = decodeURI($routeParams.id).split("?");
         var profileId = $scope.profileId = urlParts[1];
         var experimentId = $scope.experimentId = urlParts[0];

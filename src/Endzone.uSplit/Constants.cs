@@ -16,6 +16,7 @@ namespace Endzone.uSplit
             public const string Play = "icon-play";
             public const string Autofill = "icon-autofill";
             public const string FlagAlt = "icon-flag-alt";
+            public const string Account = "icon-keyhole";
         }
 
         public static class Trees
