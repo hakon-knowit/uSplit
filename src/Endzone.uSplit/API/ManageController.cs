@@ -108,9 +108,13 @@ namespace Endzone.uSplit.API
         }
 
         [HttpPost]
-        public async Task<IHttpActionResult> SetSegmentAsync([FromBody]SetSegment request)
+        public async Task<IHttpActionResult> SetSegmentAsync(string profileId, [FromBody]SetSegmentRequest request)
         {
-            var experiment = await ExecuteAsync(request);
+            await ExecuteAsync(new SetSegment(AccountConfig.GetByProfileId(profileId)) {
+                ExperimentId = request.ExperimentId,
+                ProviderKey = request.ProviderKey,
+                Value = request.Value
+            });
             return Ok();
         }
     }

@@ -331,6 +331,7 @@
     <Compile Include="Models\IExperiment.cs" />
     <Compile Include="Models\IPublishedContentVariation.cs" />
     <Compile Include="Models\PublishedContentVariation.cs" />
+    <Compile Include="Models\SetSegmentRequest.cs" />
     <Compile Include="Models\Variation.cs" />
     <Compile Include="Models\VariationDetails.cs" />
     <Compile Include="Models\VariedContent.cs" />
