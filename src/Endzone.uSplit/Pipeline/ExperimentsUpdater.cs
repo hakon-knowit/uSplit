@@ -1,10 +1,12 @@
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Timers;
 using Endzone.uSplit.Commands;
 using Endzone.uSplit.Models;
 using Umbraco.Core;
 using Umbraco.Core.Logging;
+using GoogleExperiment = Google.Apis.Analytics.v3.Data.Experiment;
 
 namespace Endzone.uSplit.Pipeline
 {
@@ -40,22 +42,33 @@ namespace Endzone.uSplit.Pipeline
 
         public async Task UpdateExperimentsCacheAsync()
         {
+            //TODO: check if we are configured, otherwise this will generate errors every now and then
+            
+            var experiments = new List<GoogleExperiment>();
             foreach (var config in AccountConfig.GetAll())
             {
                 logger.Info(typeof(ExperimentsUpdater), $"Updating experiments data from Google Analytics for profile ${config.GoogleProfileId}.");
                 try
                 {
-                    //TODO: check if we are configured, otherwise this will generate errors every now and then
-                    var cache = ApplicationContext.Current.ApplicationCache.RuntimeCache;
-                    var experiments = await new GetExperiments(config).ExecuteAsync();
-                    cache.InsertCacheItem(Constants.Cache.RawExperimentData, () => experiments,
-                        Constants.Cache.ExperimentsRefreshInterval);
-                    cache.ClearCacheItem(Constants.Cache.ParsedExperiments);
+                    var result = await new GetExperiments(config).ExecuteAsync();
+                    experiments.AddRange(result.Items);
                 }
                 catch (Exception ex)
                 {
                     logger.Error(typeof(ExperimentsUpdater), $"Failed to download A/B testing data for profile ${config.GoogleProfileId}.", ex);
                 }
+            }
+
+            try
+            {
+                var cache = ApplicationContext.Current.ApplicationCache.RuntimeCache;
+                cache.InsertCacheItem(Constants.Cache.RawExperimentData, () => experiments,
+                    Constants.Cache.ExperimentsRefreshInterval);
+                cache.ClearCacheItem(Constants.Cache.ParsedExperiments);
+            }
+            catch (Exception ex)
+            {
+                logger.Error(typeof(ExperimentsUpdater), $"Failed to update cache after downloading experiments.", ex);
             }
         }
     }
