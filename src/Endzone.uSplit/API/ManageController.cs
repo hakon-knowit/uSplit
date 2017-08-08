@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using System.Web.Http;
 using Endzone.uSplit.Commands;
 using Endzone.uSplit.Models;
+using Umbraco.Core;
 using Umbraco.Web.Mvc;
 using GoogleExperiment = Google.Apis.Analytics.v3.Data.Experiment;
 
@@ -52,8 +53,20 @@ namespace Endzone.uSplit.API
         [HttpDelete]
         public async Task DeleteExperimentAsync(string id, string profileId)
         {
+            var accountConfigs = AccountConfig.GetAll().ToList();
+            AccountConfig config;
+            if ((id.IsNullOrWhiteSpace() || id == "-1") && accountConfigs.Count == 1)
+            {
+                config = accountConfigs.First();
+            }
+            else
+            {
+                config = AccountConfig.GetByProfileId(profileId);                
+            }
+            
+            
             //TODO: add an option to delete variations (e.g. Umbraco content linked to it)
-            await ExecuteAsync(new DeleteExperiment(AccountConfig.GetByProfileId(profileId))
+            await ExecuteAsync(new DeleteExperiment(config)
             {
                 GoogleExperimentId = id
             });

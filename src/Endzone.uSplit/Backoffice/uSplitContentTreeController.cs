@@ -160,7 +160,7 @@ namespace Endzone.uSplit.Backoffice
                     break;
             }
             var url = $"content/{Constants.Trees.AbTesting}/experiment/{experiment.GoogleExperiment.Id}?{parentId}";
-            var node = CreateTreeNode(experiment.GoogleExperiment.Id, parentId, queryStrings, name, icon, url); // FIXME
+            var node = CreateTreeNode(experiment.GoogleExperiment.Id, parentId, queryStrings, name, icon, url);
             return node;
         }
 
@@ -169,10 +169,17 @@ namespace Endzone.uSplit.Backoffice
         {
             var menu = new MenuItemCollection();
 
+            var accounts = AccountConfig.GetAll().ToList();
             if (IsRootNode(id))
             {
-
-                menu.Items.Add<ActionNew>("Create a new experiment");
+                if (accounts.Count == 1)
+                {
+                    menu.Items.Add<ActionNew>("Create a new experiment", "profileId", accounts.First().GoogleProfileId);
+                }
+            }
+            else if (accounts.Any(x => x.GoogleProfileId == id)) 
+            {
+                menu.Items.Add<ActionNew>("Create a new experiment", "profileId", id);
             }
             else //experiment node
             {

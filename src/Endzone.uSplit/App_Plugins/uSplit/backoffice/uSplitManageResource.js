@@ -33,10 +33,10 @@
                 }, {params: {profileId: profileId}});
             },
             start: function (experimentId, profileId) {
-                return $http.post(controllerPath + "StartExperimentAsync/" + experimentId, {params: {profileId: profileId}});
+                return $http.post(controllerPath + "StartExperimentAsync/" + experimentId, {}, {params: {profileId: profileId}});
             },
             stop: function (experimentId, profileId) {
-                return $http.post(controllerPath + "StopExperimentAsync/" + experimentId, {params: {profileId: profileId}});
+                return $http.post(controllerPath + "StopExperimentAsync/" + experimentId, {}, {params: {profileId: profileId}});
             }
         }
     }
